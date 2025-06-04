@@ -150,7 +150,7 @@ const CourseDetailPage = () => {
             {courseDetail?.objectives && (
               <Card className="mb-8">
                 <CardHeader>
-                  <CardTitle>What you'll learn</CardTitle>
+                  <CardTitle>What you&apos;ll learn</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">

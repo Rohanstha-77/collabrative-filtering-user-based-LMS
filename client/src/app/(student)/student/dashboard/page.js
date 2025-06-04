@@ -126,7 +126,7 @@ const Dashboard = () => {
                       className="hover:shadow-lg transition-shadow"
                     >
                       <CardContent className="p-4">
-                        <img
+                        <Image
                           src={item.image}
                           alt={item.title}
                           className="w-full h-40 object-cover rounded-lg mb-4"

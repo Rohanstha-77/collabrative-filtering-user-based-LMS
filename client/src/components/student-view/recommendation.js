@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/carousel";
 import { AuthContext } from "@/context/auth-context";
 import { getRecommendationService } from "@/services";
+import Image from "next/image";
 import { useContext, useEffect, useState } from "react";
 
 export function CourseCarousel() {
@@ -101,11 +102,11 @@ export function CourseCarousel() {
               {
                 storeRecommendation.length > 0 ? (
                   <div>
-                    {storeRecommendation.map(item => (
-                    <Card className="hover:shadow-lg transition-shadow">
+                    {storeRecommendation.map((item,i) => (
+                    <Card key={i} className="hover:shadow-lg transition-shadow">
                       <CardContent className="p-4">
                         {/* Image */}
-                        <img
+                        <Image
                           src={item.image}
                           alt={item.title}
                           className="w-full h-40 object-cover rounded-lg mb-4"
