@@ -16,7 +16,7 @@ const app = express()
 const port = process.env.PORT || 8080;
 
 app.use(cors({
-    origin: process.env.CLIENT_URL,
+    origin: "https://learning-management-system-r5w5.onrender.com/",
     methods: ["POST", "GET", "DELETE", "PUT"],
     allowedHeaders: ["Content-Type", "Authorization"],
 }))
