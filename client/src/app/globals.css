@@ -1,8 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@import 'tw-animate-css';
+@import 'tailwindcss';
+@import 'tw-animate-css'; /* Removed the invalid layer(utilities) */
 
 @custom-variant dark (&:is(.dark *));
 
@@ -46,10 +43,7 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-
-
 @layer utilities {
-
   .marquee {
     animation: scroll-left 20s linear infinite;
   }
@@ -65,6 +59,7 @@
       transform: translateX(-50%);
     }
   }
+
   :root {
     --radius: 0.625rem;
     /* --background: oklch(1 0 0); */
