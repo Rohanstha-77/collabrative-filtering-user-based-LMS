@@ -51,8 +51,6 @@ export const storeRating = async (req, res) => {
 export const getRatings = async (req, res) => {
     const { courseId, userId } = req.params
 
-    console.log(courseId, userId)
-
     // Check courseId or userId is provided or not
     if (!courseId || !userId) {
       return res.status(200).json({ success: false, message: "Course ID and User ID are required." });

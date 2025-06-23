@@ -1,24 +1,24 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
     './pages/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
-    './app/**/*.{js,ts,jsx,tsx}', // if you're using the new App Router
+    './app/**/*.{js,ts,jsx,tsx}', // for App Router support
   ],
- theme: {
+  theme: {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#4F46E5", // Main Primary Color
-          hover: "#4338CA",  // Darker shade for hover states
-          light: "#A5B4FC",  // Lighter shade for highlights or accents
+          DEFAULT: '#4F46E5',
+          hover: '#4338CA',
+          light: '#A5B4FC',
         },
         neutral: {
-          background: "#F9FAFB",
-          surface: "#FFFFFF",
-          border: "#E5E7EB",
-          text: "#1F2937",
-          textSecondary: "#6B7280",
+          background: '#F9FAFB',
+          surface: '#FFFFFF',
+          border: '#E5E7EB',
+          text: '#1F2937',
+          textSecondary: '#6B7280',
         },
       },
     },

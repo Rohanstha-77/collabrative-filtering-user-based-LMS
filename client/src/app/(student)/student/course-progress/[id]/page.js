@@ -1,5 +1,4 @@
 "use client";
-import Header from "@/components/student-view/header";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,7 +22,7 @@ import {
 } from "@/services";
 import { Check, ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import ReactConfetti from "react-confetti";
 
 const CourseProgress = () => {
@@ -39,107 +38,131 @@ const CourseProgress = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(true);
   const [rating, setRating] = useState(0);
 
-  const CourseProgress = async () => {
-    const response = await studentCourseProgressService(auth?.user?._id, id);
+  // Renamed function to avoid naming conflict
+  const fetchCourseProgress = useCallback(async () => {
+    if (!auth?.user?._id || !id) return;
+    
+    try {
+      const response = await studentCourseProgressService(auth?.user?._id, id);
 
-    if (response?.data?.success) {
-      if (!response?.data?.data?.isEnrolled) {
-        setLock(true);
-      } else {
-        setStudentCourseProgress({
-          courseDetails: response?.data?.data?.courseDetails,
-          progress: response?.data?.data?.progress,
-        });
-
-        if (response?.data?.data?.completed === true) {
-          setCurrentLecture(response?.data?.data?.courseDetails?.curriculum[0]);
-          setShowCompleteDialog(true);
-          setShowConfetti(true);
-          return;
-        }
-
-        if (response?.data?.data?.progress.length === 0) {
-          setCurrentLecture(response?.data?.data?.courseDetails?.curriculum[0]);
+      if (response?.data?.success) {
+        if (!response?.data?.data?.isEnrolled) {
+          setLock(true);
         } else {
-          const lastIndexOfViewed = response?.data?.data?.progress.reduceRight(
-            (acc, curr, index) => {
-              return acc === -1 && curr.viewed ? index : acc;
-            },
-            -1
-          );
-          setCurrentLecture(
-            response?.data?.data?.courseDetails?.curriculum[
-              lastIndexOfViewed + 1
-            ]
-          );
+          setStudentCourseProgress({
+            courseDetails: response?.data?.data?.courseDetails,
+            progress: response?.data?.data?.progress,
+          });
+          
+          if (response?.data?.data?.completed) {
+            setCurrentLecture(response?.data?.data?.courseDetails?.curriculum[0]);
+            setShowCompleteDialog(true);
+            setShowConfetti(true);
+            return;
+          }
+
+          if (response?.data?.data?.progress.length === 0) {
+            setCurrentLecture(response?.data?.data?.courseDetails?.curriculum[0]);
+          } else {
+            const lastIndexOfViewed = response?.data?.data?.progress.reduceRight(
+              (acc, curr, index) => {
+                return acc === -1 && curr.viewed ? index : acc;
+              },
+              -1
+            );
+            setCurrentLecture(
+              response?.data?.data?.courseDetails?.curriculum[
+                lastIndexOfViewed + 1
+              ]
+            );
+          }
         }
       }
+    } catch (error) {
+      console.error("Error fetching course progress:", error);
     }
-  };
+  }, [auth?.user?._id, id, setStudentCourseProgress]);
 
-  const updateCourseProgress = async () => {
-    if (currentLecture) {
-      const response = await markCourseProgressService(
-        auth?.user?._id,
-        id,
-        currentLecture._id
-      );
-      if (response?.success) {
-        CourseProgress();
+  const updateCourseProgress = useCallback(async () => {
+    if (currentLecture && auth?.user?._id && id) {
+      try {
+        const response = await markCourseProgressService(
+          auth?.user?._id,
+          id,
+          currentLecture._id
+        );
+        if (response?.success) {
+          await fetchCourseProgress(); // Await the function call
+        }
+      } catch (error) {
+        console.error("Error updating course progress:", error);
       }
     }
-  };
+  }, [currentLecture, auth?.user?._id, id, fetchCourseProgress]);
 
-  const handleRewtach = async () => {
-    const response = await resetCourseProgressService(auth?.user?._id, id);
+  const handleRewatch = async () => {
+    if (!auth?.user?._id || !id) return;
+    
+    try {
+      const response = await resetCourseProgressService(auth?.user?._id, id);
 
-    if (response?.success) {
-      setCurrentLecture(null);
-      setShowConfetti(false);
-      setShowCompleteDialog(false);
-      CourseProgress();
+      if (response?.success) {
+        setCurrentLecture(null);
+        setShowConfetti(false);
+        setShowCompleteDialog(false);
+        await fetchCourseProgress();
+      }
+    } catch (error) {
+      console.error("Error resetting course progress:", error);
     }
   };
 
   const handleClick = async (value) => {
     setRating(value);
 
-    // Save the rating to localStorage
-    localStorage.setItem(`course_${id}_rating`, value.toString());
-
-    const response = await postRatingService(id, auth?.user?._id, value);
+    try {
+      const response = await postRatingService(id, auth?.user?._id, value);
+      // Handle response if needed
+    } catch (error) {
+      console.error("Error posting rating:", error);
+    }
   };
 
+  // Fetch rating on component mount
   useEffect(() => {
     const fetchRating = async () => {
-      const response = await getRatingService(id, auth?.user?._id);
-  
-      if (response?.data?.rating != null) {
-        // Valid existing rating from API
-        setRating(response.data.rating);
-      } else {
-        // User hasn't rated yet
+      if (!id || !auth?.user?._id) return;
+      
+      try {
+        const response = await getRatingService(id, auth?.user?._id);
+
+        if (response?.data?.rating != null) {
+          setRating(response.data.rating);
+        } else {
+          setRating(0);
+        }
+      } catch (error) {
+        console.error("Error fetching rating:", error);
         setRating(0);
       }
     };
-  
+
     fetchRating();
-  }, [id]);
-  
+  }, [id, auth?.user?._id]);
 
+  // Fetch course progress on component mount and when dependencies change
   useEffect(() => {
-    CourseProgress();
-  }, [id]);
+    fetchCourseProgress();
+  }, [fetchCourseProgress]);
 
+  // Update progress when lecture is completed
   useEffect(() => {
     if (currentLecture?.progressValue === 1) {
       updateCourseProgress();
     }
-  }, [currentLecture]);
+  }, [currentLecture?.progressValue, updateCourseProgress]);
 
-  useEffect(() => {
-    if (showConfetti) setTimeout(() => setShowConfetti(false), 5000);
-  }, [showConfetti]);
+  console.log("Current lecture:", currentLecture);
 
   return (
     <>
@@ -171,7 +194,7 @@ const CourseProgress = () => {
         <div className="flex flex-1 overflow-hidden">
           <div
             className={`flex-1 ${
-              isSideBarOpen ? "mr-[400px]" : []
+              isSideBarOpen ? "mr-[400px]" : ""
             } transition-all duration-300`}
           >
             <VideoPlayer
@@ -192,7 +215,9 @@ const CourseProgress = () => {
                     key={star}
                     onClick={() => handleClick(star)}
                     className={`w-5 h-5 me-1 cursor-pointer ${
-                      star <= rating ? "text-yellow-300" : "text-gray-300 dark:text-gray-500"
+                      star <= rating
+                        ? "text-yellow-300"
+                        : "text-gray-300 dark:text-gray-500"
                     }`}
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
@@ -205,8 +230,12 @@ const CourseProgress = () => {
                 <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                   {rating.toFixed(2)}
                 </p>
-                <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">out of</p>
-                <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">5</p>
+                <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  out of
+                </p>
+                <p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  5
+                </p>
               </div>
             </div>
           </div>
@@ -240,6 +269,7 @@ const CourseProgress = () => {
                         <div
                           key={item._id}
                           className="flex items-center space-x-2 text-sm text-white font-bold cursor-pointer"
+                          onClick={() => setCurrentLecture(item)}
                         >
                           {studentCourseProgress?.progress?.find(
                             (progressItem) =>
@@ -296,7 +326,7 @@ const CourseProgress = () => {
               <Button onClick={() => router.push("/student/courses")}>
                 My courses page
               </Button>
-              <Button onClick={handleRewtach}>Rewatch this course</Button>
+              <Button onClick={handleRewatch}>Rewatch this course</Button>
             </div>
           </DialogContent>
         </Dialog>

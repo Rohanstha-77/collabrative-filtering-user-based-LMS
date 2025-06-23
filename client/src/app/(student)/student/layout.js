@@ -6,7 +6,7 @@ import { AuthContext } from '@/context/auth-context'
 const RootLayout = ({children}) => {
 
   const {auth} = useContext(AuthContext)
-  console.log(auth)
+  // console.log(auth)
   return (
     <RouteGuard authenticated={auth.authenticate} user={auth.user}>
         {children}

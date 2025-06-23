@@ -2,8 +2,7 @@ import Course from "../../models/Course.js"
 import studentCourse from "../../models/studentCourses.js"
 export const getAllStudentCourses = async (req, res) => {
     try {
-        const { category = [], level = [], sortBy = 'price-lowtohigh' } = req.query
-        // console.log(req.query)
+        const { category = [], level = [], sortBy = 'rate' } = req.query
         let filters = {}
         if (category.length) filters.category = { $in: category.split(',') }
         if (level.length) filters.level = { $in: level.split(',') }
@@ -12,6 +11,8 @@ export const getAllStudentCourses = async (req, res) => {
         let sort = {}
 
         switch (sortBy) {
+            case "rate":
+                sort.averageRating = -1
             case "price-lowtohigh":
                 sort.pricing = 1
                 break;

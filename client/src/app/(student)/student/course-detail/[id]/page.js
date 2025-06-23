@@ -25,7 +25,7 @@ const CourseDetailPage = () => {
   const { id } = useParams();
   const { auth } = useContext(AuthContext);
   const userId = auth?.user?._id;
-  console.log(userId)
+  // console.log(userId)
 
   const {
     courseDetail,
@@ -38,7 +38,6 @@ const CourseDetailPage = () => {
 
   const [displayFreePreview, setDisplayFreePreview] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
-  const [courseEnrollId, setCourseEnrollId] = useState(null);
 
   useEffect(() => {
     if (id && id !== currentCourseId) {
@@ -55,7 +54,6 @@ const CourseDetailPage = () => {
         );
         if (response?.success) {
           setCourseDetail(response.data);
-          setCourseEnrollId(response.enrollCourseID);
         }
       } catch (err) {
         console.error("Error fetching course:", err);
@@ -63,15 +61,15 @@ const CourseDetailPage = () => {
         setLoadingState(false);
       }
     };
-
+   
     if (currentCourseId && userId) {
       fetchCourseDetail();
     }
-    if (courseEnrollId) {
-      router.push(`/student/course-progress/${courseEnrollId}`);
-    }
-  }, [currentCourseId, userId, setCourseDetail, setLoadingState, courseEnrollId, router]);
-  console.log(courseEnrollId)
+   
+  }, [currentCourseId, userId]);
+
+  
+  // console.log(courseEnrollId)
   // useEffect(() => {
   //   if (courseEnrollId) {
   //     router.push(`/student/course-progress/${courseEnrollId}`);
@@ -109,7 +107,6 @@ const CourseDetailPage = () => {
     try {
       const response = await postEnrollCouseService(formData);
       if (response?.success) {
-        setCourseEnrollId(response?.data?.enrollCourseID);
         router.push(`/student/course-progress/${courseDetail._id}`)
       }
     } catch (err) {
@@ -159,7 +156,7 @@ const CourseDetailPage = () => {
                       .filter((item) => item.trim() !== "")
                       .map((item, i) => (
                         <li key={i} className="flex items-start">
-                          <CheckCircle color="#4F46E5" className="mr-2 h-5 w-5 text-green-500" />
+                          <CheckCircle color="#4F46E5" className="mr-2 h-5 w-[30px] text-green-500" />
                           <span>{item.trim()}</span>
                         </li>
                       ))}

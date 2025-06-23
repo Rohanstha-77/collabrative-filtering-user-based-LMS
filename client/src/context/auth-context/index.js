@@ -1,4 +1,5 @@
 "use client";
+import Loader from "@/components/ui/loader";
 import { initialSignInFormData, initialSignUpFormData } from "@/config";
 import { checkAuth, loginService, registerService } from "@/services";
 import { Children, createContext, useEffect, useState } from "react";
@@ -85,7 +86,7 @@ export default function AuthProvider({ children }) {
     // console.log(auth)
   }, []);
   if (loading) {
-    return <div>Loading...</div>; 
+    return <Loader/> 
   }
 
 //   console.log(auth);

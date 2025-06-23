@@ -7,7 +7,7 @@ function RouteGuard({ authenticated, user, children }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  console.log("Authenticated:", authenticated, "User:", user, "Pathname:", pathname);
+  // console.log("Authenticated:", authenticated, "User:", user, "Pathname:", pathname);
   // console.log(!authenticated)
   useEffect(() => {
 

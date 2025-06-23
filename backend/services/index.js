@@ -9,13 +9,14 @@ export async function generateRecommendationsForUser(userId) {
   const ratings = await Rating.find();
   const progressRecords = await CourseProgress.find();
 
+  //remove duplicate id 
   const userIds = new Set([...ratings.map(r => r.userId), ...progressRecords.map(p => p.userId)]);
   const courseIds = new Set([...ratings.map(r => r.courseId), ...progressRecords.map(p => p.courseId)]);
 
   const allUserIds = Array.from(userIds);
   const allCourseIds = Array.from(courseIds);
 
-  // Build user-course interaction vectors combining rating + completion score
+  // Build user-course interaction vectors combining rating + completion score or completion
   const userVectors = {};
 
   for (const uid of allUserIds) {
@@ -24,25 +25,23 @@ export async function generateRecommendationsForUser(userId) {
       const ratingEntry = ratings.find(r => r.userId === uid && r.courseId === cid);
       const ratingScore = ratingEntry ? ratingEntry.rating : 0;
 
-      // Completion progress (implicit feedback)
+      // Completion progress 
       const progressEntry = progressRecords.find(p => p.userId === uid && p.courseId === cid);
       let completionScore = 0;
 
       if (progressEntry) {
-        // Example: completed = 1, partial progress between 0 and 1, scaled to 0-5
-        // You can adjust this logic per your progress model
-        // Assuming 'completed' is boolean, 'lectureProgress' has array of lectures with viewed flag
+        // if course is completed or by course progress 
+        // Example: completed = 1, course progress between 0 and 1, scaled to 0-5
         if (progressEntry.completed === "true" || progressEntry.completed === true) {
           completionScore = 5; // max score for completion
         } else if (progressEntry.lectureProgress && progressEntry.lectureProgress.length) {
           const totalLectures = progressEntry.lectureProgress.length;
           const viewedLectures = progressEntry.lectureProgress.filter(lp => lp.viewed).length;
-          completionScore = (viewedLectures / totalLectures) * 5; // scale 0-5
+          completionScore = (viewedLectures / totalLectures) * 5;
         }
       }
 
-      // Combine both: weighted sum or max? Let's do weighted average
-      // Example weights: rating 70%, completion 30%
+      //combine the two score i.e rating and completion
       const combinedScore = (ratingScore * 0.7) + (completionScore * 0.3);
 
       return combinedScore;
@@ -50,9 +49,9 @@ export async function generateRecommendationsForUser(userId) {
   }
 
   const targetVector = userVectors[userId];
-  if (!targetVector) return; // no data for user, fallback handled elsewhere
+  if (!targetVector) return; // no data for user, fallback handled
 
-  // Compute similarity with other users
+  // similarity with other users
   const similarities = [];
   for (const uid of allUserIds) {
     if (uid !== userId) {
@@ -89,6 +88,7 @@ export async function generateRecommendationsForUser(userId) {
         image: course.image,
       })),
     },
+    //create a new doc of data doesnt exist
     { upsert: true }
   );
 }

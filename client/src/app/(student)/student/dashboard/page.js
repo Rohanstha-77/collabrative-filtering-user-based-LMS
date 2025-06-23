@@ -20,12 +20,13 @@ import {
 } from "@/components/ui/carousel";
 // import { useRecommendation } from "@/context/recommendation";
 import { Loader2 } from "lucide-react";
+import Courses from "@/components/ui/courses";
 
 const Dashboard = () => {
   // const {auth} = useContext(AuthContext)
   // console.log(auth.authenticate)
   // console.log(auth)
-
+  const [showAllCourses, setShowAllCourses] = useState(false);
   const router = useRouter();
 
   const { studentCoursesList, setStudentCoursesList } =
@@ -100,6 +101,8 @@ const Dashboard = () => {
           </div>
         </section>
 
+        <Courses />
+
         {/* <CourseCarousel/> */}
 
         <div className="w-full bg-gray-100 p-6 rounded-lg">
@@ -107,26 +110,31 @@ const Dashboard = () => {
             Recommended for You
           </h2>
 
-          <Carousel
-            opts={{
-              align: "start",
-            }}
-            className=" ml-10 w-[95%]"
-          >
-            <CarouselContent>
-              {isLoadingRecommendation ? (
-                <div className="flex justify-center items-center h-40">
-                  <Loader2 className="animate-spin w-8 h-8 text-[#4F46E5]" />
-                </div>
-              ) : storeRecommendation?.length > 0 ? (
+          {isLoadingRecommendation ? (
+            <div className="flex justify-center items-center h-40">
+              <Loader2 className="animate-spin w-8 h-8 text-[#4F46E5]" />
+            </div>
+          ) : storeRecommendation?.length > 0 ? (
+            <Carousel
+              opts={{
+                align: "start",
+              }}
+              className=" ml-10 w-[95%]"
+            >
+              <CarouselContent>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3 p-2">
                   {storeRecommendation.map((item) => (
                     <Card
                       key={item.courseId}
                       className="hover:shadow-lg transition-shadow"
+                      onClick={() =>
+                        router.push(`student/course-detail/${item.courseId}`)
+                      }
                     >
                       <CardContent className="p-4">
                         <Image
+                          width={300}
+                          height={200}
                           src={item.image}
                           alt={item.title}
                           className="w-full h-40 object-cover rounded-lg mb-4"
@@ -172,15 +180,15 @@ const Dashboard = () => {
                     </Card>
                   ))}
                 </CarouselItem>
-              ) : (
-                <h1 className="text-center text-gray-500">
-                  No Recommendation for you
-                </h1>
-              )}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-          </Carousel>
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          ) : (
+            <h1 className="text-center text-gray-500">
+              No Recommendation for you
+            </h1>
+          )}
         </div>
 
         <section className="py-8 px-4 lg:px-8 bg-gray-100">
@@ -190,7 +198,7 @@ const Dashboard = () => {
               <Button
                 className="justify-start"
                 key={i}
-                onClick={() => handleListPage(items.label)}
+                onClick={() => handleListPage(items.id)}
                 variant="secondary"
               >
                 {items.label}
@@ -201,9 +209,13 @@ const Dashboard = () => {
 
         <section className="py-12 px-4 lg:px-8">
           <h2 className="text-2xl font-bold mb-6">Courses</h2>
+
           <div className="grid grid-cols sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {studentCoursesList && studentCoursesList.length > 0 ? (
-              studentCoursesList.map((items) => (
+              (showAllCourses
+                ? studentCoursesList
+                : studentCoursesList.slice(0, 4)
+              ).map((items) => (
                 <div
                   key={items?._id}
                   onClick={() =>
@@ -222,7 +234,6 @@ const Dashboard = () => {
                   </div>
                   <div className="p-6">
                     <h3 className="font-bold mb-2">{items?.title}</h3>
-                    {/* <p className='text-sm text-gray-700 mb-2'>admin name</p> */}
                     <p className="font-bold text-[16px]">
                       {items?.pricing > 0 ? items.pricing : "Free"}
                     </p>
@@ -233,6 +244,17 @@ const Dashboard = () => {
               <h1>No courses Found</h1>
             )}
           </div>
+
+          {studentCoursesList && studentCoursesList.length > 4 && (
+            <div className="mt-6">
+              <button
+                onClick={() => setShowAllCourses((prev) => !prev)}
+                className="text-[#4F46E5] hover:cursor-pointer hover:bg-blue-100 border-[#4F46E5] p-3 rounded-xl font-medium border-2 min-w-3"
+              >
+                {showAllCourses ? "View Less" : "View More"}
+              </button>
+            </div>
+          )}
         </section>
       </div>
     </>

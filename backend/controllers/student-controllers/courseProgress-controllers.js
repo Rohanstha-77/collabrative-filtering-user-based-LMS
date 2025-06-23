@@ -72,10 +72,9 @@ export const markCurrentCourseAsViewed = async(req,res) => {
 export const getCurrentCourseProgress = async(req,res) => {
     try {
         const {userId,courseId} = req.params
-        // console.log(req.params)
 
         const courseEnrolled = await studentCourse.findOne({userId})
-        // console.log(courseEnrolled)
+
         
         const isCurrentCourseEnrolled =  courseEnrolled?.courses?.findIndex(item => item.courseId === courseId) > -1
 

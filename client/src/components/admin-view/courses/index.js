@@ -18,7 +18,7 @@ import { toast } from 'react-toastify'
 const Courses = ({listOfCourses}) => {
   // console.log(listOfCourses)
   const router =useRouter()
-  console.log(listOfCourses)
+  // console.log(listOfCourses)
   const handleDeleteCourse = async(id) => {
       const response = await courseDeleteService(id)
 

@@ -1,7 +1,29 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@tailwind utilities;
 
 @custom-variant dark (&:is(.dark *));
+
+@layer utilities {
+  .marquee {
+    animation: scroll-left 20s linear infinite;
+  }
+
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+}
+
+@layer utilities {
+  .marquee:hover {
+    animation-play-state: paused;
+  }
+}
 
 @theme inline {
   --color-background: var(--background);
