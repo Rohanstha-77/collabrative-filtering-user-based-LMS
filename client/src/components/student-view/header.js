@@ -20,6 +20,7 @@ const Header = () => {
 
             <div className="flex items-center space-x-1">
                 <button className='text-[#4F46E5] ml-6 text-2xl font-semibold text-[14px] md:text-[20px] cursor-pointer' onClick={() => router.push('/student/courses')}>Explore Courses</button>
+                <button className='text-[#4F46E5] ml-6 text-2xl font-semibold text-[14px] md:text-[20px] cursor-pointer' onClick={() => router.push('/student/assignments')}>Assignments</button>
             </div>
         </div>
         <div className="flex items-center space-x-4">

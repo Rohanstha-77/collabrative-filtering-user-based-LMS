@@ -11,6 +11,7 @@ const cosurseProgressSchema = new mongoose.Schema({
     courseId: String,
     completed: Boolean,
     completionDate: String,
+    certificateUrl: String,
     lectureProgress: [lectureProgressSchema],
     
 })

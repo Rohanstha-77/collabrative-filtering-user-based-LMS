@@ -5,7 +5,8 @@ const recommendationSchema = new mongoose.Schema({
     recommendationCourses:[{
         courseId: String,
         title: String,
-        image: String
+        image: String,
+        personalizationScore: Number
     }]
 })
 

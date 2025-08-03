@@ -21,6 +21,7 @@ import {
 // import { useRecommendation } from "@/context/recommendation";
 import { Loader2 } from "lucide-react";
 import Courses from "@/components/ui/courses";
+import Link from "next/link";
 
 const Dashboard = () => {
   // const {auth} = useContext(AuthContext)
@@ -37,7 +38,7 @@ const Dashboard = () => {
   // const [courseId, setCourseId] = useState(null)
 
   const [storeRecommendation, setStoreRecommendation] = useState(null);
-  const [isLoadingRecommendation, setIsLoadingRecommendation] = useState(true); // ✅ loader state
+  const [isLoadingRecommendation, setIsLoadingRecommendation] = useState(true);
 
   const getRecommendation = async () => {
     try {
@@ -46,6 +47,7 @@ const Dashboard = () => {
       if (response?.success) {
         setStoreRecommendation(response.data);
       }
+      
     } catch (error) {
       console.error("Recommendation error:", error);
     } finally {
@@ -122,11 +124,10 @@ const Dashboard = () => {
               className=" ml-10 w-[95%]"
             >
               <CarouselContent>
-                <CarouselItem className="md:basis-1/2 lg:basis-1/3 p-2">
-                  {storeRecommendation.map((item) => (
+                {storeRecommendation.map((item) => (
+                  <CarouselItem key={item.courseId} className="md:basis-1/3 lg:basis-1/4 p-2 ">
                     <Card
-                      key={item.courseId}
-                      className="hover:shadow-lg transition-shadow"
+                      className="hover:shadow-lg transition-shadow cursor-pointer"
                       onClick={() =>
                         router.push(`student/course-detail/${item.courseId}`)
                       }
@@ -173,13 +174,14 @@ const Dashboard = () => {
                             {Math.floor(item.averageRating)} / 5
                           </span>
                         </div>
-                        <button className="w-full px-4 py-2 bg-[#4F46E5] text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors">
+                        
+                        <button className="w-full px-4 py-2 cursor-pointer bg-[#4F46E5] text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors">
                           View Details
                         </button>
                       </CardContent>
                     </Card>
-                  ))}
-                </CarouselItem>
+                  </CarouselItem>
+                ))}
               </CarouselContent>
               <CarouselPrevious />
               <CarouselNext />

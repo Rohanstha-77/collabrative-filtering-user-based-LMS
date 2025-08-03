@@ -35,9 +35,14 @@ export const loginUser = async(req,res) => {
     // console.log(req.user)
 
     const checkUser = await User.findOne({email:email})
-    // console.log("first", checkUser)
+
+    if(!checkUser) return res.status(200).json({
+        success: false,
+        message: "Invalid Credentials"
+    })
+
     const comparePassword = await bcrypt.compare(password, checkUser.password)
-    if(!checkUser || !comparePassword) return res.status(200).json({
+    if(!comparePassword) return res.status(200).json({
         success: false,
         message: "Invalid Credentials"
     })

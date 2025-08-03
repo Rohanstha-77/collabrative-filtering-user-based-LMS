@@ -16,22 +16,19 @@ export async function generateRecommendationsForUser(userId) {
   const allUserIds = Array.from(userIds);
   const allCourseIds = Array.from(courseIds);
 
-  // Build user-course interaction vectors combining rating + completion score or completion
+  // user course interaction vector rating and course completion
   const userVectors = {};
 
   for (const uid of allUserIds) {
     userVectors[uid] = allCourseIds.map(cid => {
-      // Rating (explicit feedback)
+      // Rating
       const ratingEntry = ratings.find(r => r.userId === uid && r.courseId === cid);
       const ratingScore = ratingEntry ? ratingEntry.rating : 0;
 
-      // Completion progress 
       const progressEntry = progressRecords.find(p => p.userId === uid && p.courseId === cid);
       let completionScore = 0;
 
       if (progressEntry) {
-        // if course is completed or by course progress 
-        // Example: completed = 1, course progress between 0 and 1, scaled to 0-5
         if (progressEntry.completed === "true" || progressEntry.completed === true) {
           completionScore = 5; // max score for completion
         } else if (progressEntry.lectureProgress && progressEntry.lectureProgress.length) {
@@ -41,7 +38,6 @@ export async function generateRecommendationsForUser(userId) {
         }
       }
 
-      //combine the two score i.e rating and completion
       const combinedScore = (ratingScore * 0.7) + (completionScore * 0.3);
 
       return combinedScore;
@@ -49,7 +45,10 @@ export async function generateRecommendationsForUser(userId) {
   }
 
   const targetVector = userVectors[userId];
-  if (!targetVector) return; // no data for user, fallback handled
+  if (!targetVector) return;
+
+  console.log("Target User ID:", userId);
+  console.log("Target User Vector:", targetVector);
 
   // similarity with other users
   const similarities = [];
@@ -59,25 +58,28 @@ export async function generateRecommendationsForUser(userId) {
       similarities.push({ uid, sim });
     }
   }
+  console.log("All User Similarities:", similarities);
 
   similarities.sort((a, b) => b.sim - a.sim);
   const topSimilarUsers = similarities.slice(0, 5);
 
-  // Recommend courses highly rated or completed by similar users but not by target user
-  const recommendedCourses = new Set();
+
+  const recommendedCourses = new Map();
 
   for (const { uid } of topSimilarUsers) {
     allCourseIds.forEach((cid, i) => {
-      if (targetVector[i] === 0 && userVectors[uid][i] >= 4) {
-        recommendedCourses.add(cid);
+      const interactionScore = userVectors[uid][i];
+      if (targetVector[i] === 0 && interactionScore >= 3.5) {
+        const existingScore = recommendedCourses.get(cid) || 0;
+        recommendedCourses.set(cid, existingScore + interactionScore);
       }
     });
   }
 
-  // Fetch course details for recommendations
-  const finalCourses = await Course.find({ _id: { $in: Array.from(recommendedCourses) } });
 
-  // Save/update recommendations
+  const finalCourses = await Course.find({ _id: { $in: Array.from(recommendedCourses.keys()) } });
+
+
   await Recommendation.findOneAndUpdate(
     { userId },
     {
@@ -86,6 +88,7 @@ export async function generateRecommendationsForUser(userId) {
         courseId: course._id,
         title: course.title,
         image: course.image,
+        personalizationScore: recommendedCourses.get(course._id.toString()), // calculated score
       })),
     },
     //create a new doc of data doesnt exist

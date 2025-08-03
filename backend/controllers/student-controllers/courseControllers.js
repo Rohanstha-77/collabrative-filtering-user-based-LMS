@@ -87,7 +87,7 @@ export const getCoursesDetails = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "An internal server error occurred",
-            error: error.message // Optional: Include error message for debugging
+            error: error.message
         });
     }
 };

@@ -69,6 +69,7 @@ export const getCoursesByStudentId = async (req, res) => {
         return {
           ...course.toObject?.() || course,
           completionPercentage,
+          completed: progress?.completed || false,
         };
       })
     );

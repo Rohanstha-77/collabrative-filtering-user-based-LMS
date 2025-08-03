@@ -122,13 +122,13 @@ const CourseProgress = () => {
 
     try {
       const response = await postRatingService(id, auth?.user?._id, value);
-      // Handle response if needed
+  
     } catch (error) {
       console.error("Error posting rating:", error);
     }
   };
 
-  // Fetch rating on component mount
+
   useEffect(() => {
     const fetchRating = async () => {
       if (!id || !auth?.user?._id) return;
@@ -150,7 +150,6 @@ const CourseProgress = () => {
     fetchRating();
   }, [id, auth?.user?._id]);
 
-  // Fetch course progress on component mount and when dependencies change
   useEffect(() => {
     fetchCourseProgress();
   }, [fetchCourseProgress]);
@@ -240,7 +239,7 @@ const CourseProgress = () => {
             </div>
           </div>
           <div
-            className={`fixed top-[68px] right-0 bottom-0 w-[400px] bg-[#1c1d1f] border-1 border-gray-700 transition-all duration-300 ${
+            className={`fixed top-[68px] right-0 bottom-0 w-[400px] bg-[#1c1d1f] border border-gray-700 transition-all duration-300 ${
               isSideBarOpen ? "translate-x-0" : "translate-x-full"
             }`}
           >
@@ -269,7 +268,7 @@ const CourseProgress = () => {
                         <div
                           key={item._id}
                           className="flex items-center space-x-2 text-sm text-white font-bold cursor-pointer"
-                          onClick={() => setCurrentLecture(item)}
+                          
                         >
                           {studentCourseProgress?.progress?.find(
                             (progressItem) =>
@@ -321,10 +320,18 @@ const CourseProgress = () => {
             </DialogHeader>
             <DialogDescription className={"flex flex-col gap-3"}>
               <Label>You have completed this course</Label>
+              {studentCourseProgress?.progress?.completed && studentCourseProgress?.progress?.certificateUrl && (
+                <Button onClick={() => window.open(studentCourseProgress.progress.certificateUrl, '_blank')}>
+                  View Certificate
+                </Button>
+              )}
             </DialogDescription>
             <div className="flex flex-row gap-3">
               <Button onClick={() => router.push("/student/courses")}>
                 My courses page
+              </Button>
+              <Button onClick={() => router.push("/student/assignments")}>
+                Go to Assignments
               </Button>
               <Button onClick={handleRewatch}>Rewatch this course</Button>
             </div>

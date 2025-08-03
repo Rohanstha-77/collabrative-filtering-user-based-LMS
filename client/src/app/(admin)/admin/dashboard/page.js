@@ -7,7 +7,9 @@ import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { AdminContext } from '@/context/admin-context'
 import { AuthContext } from '@/context/auth-context/index'
 import { adminCourseListService } from '@/services'
-import { BarChart, Book, LogOut } from 'lucide-react'
+import SubmittedAssignmentsPage from '@/app/(admin)/admin/submitted-assignments/page'
+
+import { BarChart, Book, LogOut, ClipboardList } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { useContext, useEffect, useState } from 'react'
 
@@ -45,6 +47,12 @@ const ADashboard = () => {
       label: "Courses",
       value: "courses",
       component: <Courses listOfCourses={adminCourseList}/>
+    },
+    {
+      icon: ClipboardList,
+      label: "Submitted Assignments",
+      value: "submitted-assignments",
+      component: <SubmittedAssignmentsPage/>
     },
     {
       icon: LogOut,

@@ -106,16 +106,19 @@ export const getCurrentCourseProgress = async(req,res) => {
             })
         }
         const courseDetails = await Course.findById(courseId)
+        const responseData = {
+            courseDetails,
+            progress: currentCourseProgress.lectureProgress,
+            completed: currentCourseProgress.completed,
+            completionDate: currentCourseProgress.completionDate,
+            certificateUrl: currentCourseProgress.certificateUrl,
+            isEnrolled: true
+        };
+        console.log("Backend sending course progress data:", responseData);
         res.status(200).json({
             success: true,
             message:"Course Details of get current Course Progress",
-            data: {
-                courseDetails,
-                progress: currentCourseProgress.lectureProgress,
-                completed: currentCourseProgress.completed,
-                completionDate: currentCourseProgress.completionDate,
-                isEnrolled: true
-            }
+            data: responseData
         })
         
 

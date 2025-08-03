@@ -142,7 +142,7 @@ const CourseDetailPage = () => {
 
         <div className="flex flex-col md:flex-row gap-8 mt-8">
           {/* Main Content */}
-          <main className="flex-grow">
+          <main className="grow">
             {/* What You'll Learn */}
             {courseDetail?.objectives && (
               <Card className="mb-8">

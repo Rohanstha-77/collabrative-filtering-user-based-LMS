@@ -40,7 +40,7 @@ const MyCourses = () => {
           {studentEnrollCourse && studentEnrollCourse.length > 0 ? (
             studentEnrollCourse.map((item) => (
               <Card key={item._id} className="flex flex-col">
-                <CardContent className="p-4 flex-grow">
+                <CardContent className="p-4 grow">
                   {/* Course Image */}
                   <div className="w-full h-[180px] overflow-hidden rounded-md">
                     <Image

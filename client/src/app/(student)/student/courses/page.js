@@ -199,7 +199,7 @@ const Courses = () => {
                 studentCoursesList.map((items) => (
                   <Card onClick = {() => checkEnrollment(items._id)} className={"cursor-pointer"} key={items._id}>
                     <CardContent className={"flex gap-4 mx-9 p-4"}>
-                      <div className="w-48 h-32 flex-shrink-0">
+                      <div className="w-48 h-32 shrink-0">
                         <Image
                           src={items.image}
                           alt="image not found"

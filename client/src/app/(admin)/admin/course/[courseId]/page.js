@@ -2,6 +2,7 @@
 import Circurriculum from '@/components/admin-view/courses/addnewcourse/circurriculum'
 import CourseLandingPage from '@/components/admin-view/courses/addnewcourse/course-landing-page'
 import Setting from '@/components/admin-view/courses/addnewcourse/setting'
+import AssignmentManagement from '@/components/admin-view/courses/addnewcourse/AssignmentManagement'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -123,6 +124,7 @@ const Course = () => {
                             <TabsTrigger value="Curriculum">Curriculum</TabsTrigger>
                             <TabsTrigger value="courseLandingPage">course landing page</TabsTrigger>
                             <TabsTrigger value="setting">setting</TabsTrigger>
+                            <TabsTrigger value="assignments">Assignments</TabsTrigger>
                         </TabsList>
                         <TabsContent value="Curriculum">
                             <Circurriculum/>
@@ -132,6 +134,9 @@ const Course = () => {
                         </TabsContent>
                         <TabsContent value="setting">
                             <Setting/>
+                        </TabsContent>
+                        <TabsContent value="assignments">
+                            <AssignmentManagement courseId={params?.courseId}/>
                         </TabsContent>
                     </Tabs>
                 </div>

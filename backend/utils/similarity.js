@@ -1,4 +1,4 @@
-// cosine Similarity
+
 
 export function cosineSimilarity(vecA, vecB) {
   const dotProduct = vecA.reduce((sum, val, i) => sum + val * vecB[i], 0);

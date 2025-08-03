@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 const axiosInstance = axios.create({
-    baseURL: "/api"// 'https://collabrative-filtering-user-based-lms.onrender.com/',
+    baseURL: "http://localhost:8080/"// 'https://collabrative-filtering-user-based-lms.onrender.com/',
 
 })
 

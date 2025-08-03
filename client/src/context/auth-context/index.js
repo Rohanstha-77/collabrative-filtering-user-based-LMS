@@ -40,6 +40,7 @@ export default function AuthProvider({ children }) {
       setAuth({
         authenticate: true,
         user: loginData.data.user,
+        accessToken: loginData.data.accessToken,
       });
     } else {
       setAuth({
@@ -56,6 +57,7 @@ export default function AuthProvider({ children }) {
       setAuth({
         authenticate: true,
         user: data.data.user,
+        accessToken: sessionStorage.getItem("accessToken"),
       });
     } else {
       setAuth({
@@ -102,6 +104,7 @@ export default function AuthProvider({ children }) {
         handleLoginUser,
         auth,
         logOut,
+        setAuth,
       }}
     >
       {children}
